@@ -121,9 +121,9 @@ body {
 .panel[data-active="true"] { display: block; }
 
 .wf {
-  max-width: 1280px;
-  margin: 32px auto 64px;
-  padding: 0 28px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .wf-meta {
@@ -158,9 +158,6 @@ body {
 
 .canvas {
   background: #FFFCF4;
-  border: 2px solid var(--ink);
-  border-radius: 10px;
-  box-shadow: 6px 6px 0 var(--ink);
   overflow: hidden;
   position: relative;
 }
@@ -1726,7 +1723,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 @media (min-width: 481px) {
   body {
     background: #ECE2C8;
-    padding: 32px 0;
+    padding: 0;
   }
   .mobile-view .shell {
     border-radius: 24px;
@@ -1994,11 +1991,6 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <div class="wf">
 
     <div class="canvas">
-      <div class="browser-bar">
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        <div class="url">https://hiyocoroom.com/</div>
-      </div>
-
       <!-- TOP UTILITY BAR -->
       <div class="b-topbar">
         <div class="links">
