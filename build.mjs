@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 // Keep the approved v4 comparison intact; generate the working pages from it.
 const template = readFileSync(new URL('./top-mock-v4.html', import.meta.url), 'utf8');
 const routes = new Map([
+  ['https://hiyocoroom.com/access/', 'access.html'],
   ['https://hiyocoroom.com/usage_fee/', 'usage_fee.html'],
   ['https://hiyocoroom.com/for_zero/', 'for_zero.html'],
   ['https://hiyocoroom.com/belongings/', 'belongings.html'],
@@ -12,10 +13,12 @@ const routes = new Map([
   ['https://hiyocoroom.com/room_and_childcare/', 'room.html#childcare'],
 ]);
 function links(html) {
+  html = html.replace(/href="(?:index\.html)?#access"/g, 'href="access.html"');
   for (const [from, to] of routes) html = html.replaceAll(`href="${from}"`, `href="${to}"`);
   return html;
 }
 const extraStyle = `<style>
+.route-list{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}.route-list figure{margin:0}.route-list img{display:block;width:100%;aspect-ratio:4/5;object-fit:contain;background:#f0f2ef;border-radius:4px}.route-list figcaption{margin-top:16px}.route-list h3{display:flex;align-items:center;gap:12px;font-size:21px;margin:0 0 10px}.route-num{display:inline-grid;place-items:center;width:32px;height:32px;flex-shrink:0;background:var(--yellow);border-radius:50%;font:700 16px sans-serif}.access-map{display:block;width:100%;height:360px;border:1px solid var(--line);margin:24px 0}.route-list p{font-size:15px}@media(max-width:700px){.route-list{grid-template-columns:1fr;gap:32px}.access-map{height:280px}}
 .tour-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px 24px}.tour-grid figure{margin:0}.tour-grid img{width:100%;height:310px;object-fit:contain;background:#f0f2ef}.tour-grid figcaption{margin-top:12px;font-size:14px}.tour-grid h3{font-size:20px;margin:0 0 8px}.outline-list{margin:0}.outline-list>div{display:grid;grid-template-columns:150px 1fr;gap:24px;padding:18px 0;border-bottom:1px solid var(--line)}.outline-list dt{font-weight:700}.outline-list dd{margin:0}.room-day{display:block}.room-day dl{max-width:650px;margin-top:24px}@media(max-width:700px){.tour-grid{grid-template-columns:1fr}.tour-grid img{height:340px}.outline-list>div{grid-template-columns:95px 1fr;gap:14px}}
 .skip-link{position:fixed;top:-100px;left:12px;z-index:100;background:white;padding:12px}.skip-link:focus{top:12px}
 .page-intro{padding:36px 0 42px;border-bottom:1px solid var(--line);background:var(--green)}
@@ -52,6 +55,7 @@ subpage('usage_fee.html', 'ご利用料金', '一時預かりは1時間から、
 subpage('for_zero.html', '0歳児のご利用', 'ひよこルームでは、0歳のお子さまも施設でお預かりしています。ホームページからご予約いただけます。', readFileSync(new URL('zero-content.html', import.meta.url), 'utf8'));
 subpage('belongings.html', '保育当日のお持ち物', '毎回のお持ち物と、年齢・ご利用時間に応じて必要なもの、初回の確認書類をご案内します。', readFileSync(new URL('belongings-content.html', import.meta.url), 'utf8'));
 subpage('faq.html', 'よくある質問', 'ご予約や料金、お預かり、お迎えについて、よくいただくご質問をまとめました。', readFileSync(new URL('faq-content.html', import.meta.url), 'utf8'));
+subpage('access.html', 'アクセス', '用賀駅から徒歩3分。道沿いの看板から少し奥に入った一軒家です。写真で入口までをご案内します。', readFileSync(new URL('access-content.html', import.meta.url), 'utf8'));
 subpage('facility_outline.html', '施設概要', '用賀駅から徒歩3分。0歳から未就学のお子さまをお預かりする、定員7名の一時預かり保育施設です。', readFileSync(new URL('facility-content.html', import.meta.url), 'utf8'));
 const tourPhotos = [
   ['building','建物・入口・設備',[
