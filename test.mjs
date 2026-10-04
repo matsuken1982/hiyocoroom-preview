@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
-for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html', 'room.html', 'facility_outline.html', 'access.html', 'babysitter.html']) {
+for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html', 'room.html', 'facility_outline.html', 'access.html', 'babysitter.html', 'salon.html']) {
   const html = read(name);
   assert.equal((html.match(/<h1[ >]/g) || []).length, 1, name);
   assert(html.includes('name="robots" content="noindex,nofollow"'), name);
@@ -41,4 +41,8 @@ assert.equal((sitter.split('id="sitter-provider"')[1].match(/<dt>/g)||[]).length
 assert(!sitter.includes('https://select-type.com/rsv/'));
 assert(sitter.includes('ベビーシッター利用規約.pdf'));
 assert(home.includes('href="babysitter.html"'));
-console.log('PASS: ten pages, links, schedule, photos, facility details, access and sitter fees/provider/consultation');
+const salon=read('salon.html');
+for(const text of ['https://noka-youga.jp/','外部講師','みきこ','稗田 洋子','予約・料金が別','お子さま連れでなくても','salon_teachers/','view_of_the_salon/']) assert(salon.includes(text),text);
+assert(!salon.includes('コーチング'));
+assert(home.includes('href="salon.html"'));
+console.log('PASS: eleven pages, internal links, service conditions and consultation routes');
