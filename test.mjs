@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
-for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html', 'room.html', 'facility_outline.html', 'access.html']) {
+for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html', 'room.html', 'facility_outline.html', 'access.html', 'babysitter.html']) {
   const html = read(name);
   assert.equal((html.match(/<h1[ >]/g) || []).length, 1, name);
   assert(html.includes('name="robots" content="noindex,nofollow"'), name);
@@ -34,4 +34,11 @@ assert.equal((access.match(/<figure>/g)||[]).length,4);
 for(const text of ['看板の横','赤い建物','突き当たり','インターホン','備考欄','近隣の通路','output=embed']) assert(access.includes(text),text);
 assert(!access.includes('2階がnoka'));
 assert(home.includes('href="access.html"'));
-console.log('PASS: nine pages, internal links, shared schedule, tour photos, facility details and access route');
+const sitter=read('babysitter.html');
+for(const text of ['7:00〜9:00','4,400円','2,400円','4,000円','2,000円','12歳以下','往復','3日以内','対象外','最高1億円','伊東 桜','2025年12月1日']) assert(sitter.includes(text),text);
+assert.equal((sitter.match(/<table /g)||[]).length,2);
+assert.equal((sitter.split('id="sitter-provider"')[1].match(/<dt>/g)||[]).length,12);
+assert(!sitter.includes('https://select-type.com/rsv/'));
+assert(sitter.includes('ベビーシッター利用規約.pdf'));
+assert(home.includes('href="babysitter.html"'));
+console.log('PASS: ten pages, links, schedule, photos, facility details, access and sitter fees/provider/consultation');
