@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
-for (const name of ['index.html', 'guide.html', 'usage_fee.html']) {
+for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html']) {
   const html = read(name);
   assert.equal((html.match(/<h1[ >]/g) || []).length, 1, name);
   assert(html.includes('name="robots" content="noindex,nofollow"'), name);
@@ -20,4 +20,9 @@ const fees = read('usage_fee.html');
 for (const price of ['1,150円','1,550円','950円','1,350円','850円','1,250円','18,500円','36,000円','52,500円','68,000円']) assert(fees.includes(price), price);
 assert(fees.includes('ベネフィット・ワンとの併用はできません'));
 assert(!fees.includes('2025年1月'));
-console.log('PASS: three pages, local links, schedule, fee amounts and preview indexing rules');
+assert.equal((read('faq.html').match(/<summary>/g) || []).length, 7);
+for (const text of ['1812879','1週間以内','身分証','切り取らず','備考欄']) assert(read('faq.html').includes(text), text);
+for (const text of ['2〜3枚','11:30〜12:00','15時','変更がなければ','資格情報']) assert(read('belongings.html').includes(text), text);
+assert(!read('for_zero.html').includes('1,100円'));
+for (const name of ['index.html','guide.html','usage_fee.html']) for (const old of ['for_zero','belongings','faq']) assert(!read(name).includes(`href="https://hiyocoroom.com/${old}/"`));
+console.log('PASS: six pages, local links, schedule, fees, seven FAQs and belongings conditions');
