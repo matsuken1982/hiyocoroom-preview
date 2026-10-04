@@ -7,12 +7,16 @@ const routes = new Map([
   ['https://hiyocoroom.com/for_zero/', 'for_zero.html'],
   ['https://hiyocoroom.com/belongings/', 'belongings.html'],
   ['https://hiyocoroom.com/faq/', 'faq.html'],
+  ['https://hiyocoroom.com/facility_outline/', 'facility_outline.html'],
+  ['https://hiyocoroom.com/view_of_the_building/', 'room.html#building'],
+  ['https://hiyocoroom.com/room_and_childcare/', 'room.html#childcare'],
 ]);
 function links(html) {
   for (const [from, to] of routes) html = html.replaceAll(`href="${from}"`, `href="${to}"`);
   return html;
 }
 const extraStyle = `<style>
+.tour-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px 24px}.tour-grid figure{margin:0}.tour-grid img{width:100%;height:310px;object-fit:contain;background:#f0f2ef}.tour-grid figcaption{margin-top:12px;font-size:14px}.tour-grid h3{font-size:20px;margin:0 0 8px}.outline-list{margin:0}.outline-list>div{display:grid;grid-template-columns:150px 1fr;gap:24px;padding:18px 0;border-bottom:1px solid var(--line)}.outline-list dt{font-weight:700}.outline-list dd{margin:0}.room-day{display:block}.room-day dl{max-width:650px;margin-top:24px}@media(max-width:700px){.tour-grid{grid-template-columns:1fr}.tour-grid img{height:340px}.outline-list>div{grid-template-columns:95px 1fr;gap:14px}}
 .skip-link{position:fixed;top:-100px;left:12px;z-index:100;background:white;padding:12px}.skip-link:focus{top:12px}
 .page-intro{padding:36px 0 42px;border-bottom:1px solid var(--line);background:var(--green)}
 .breadcrumb{font-size:13px;margin-bottom:24px}.page-intro h1{font-size:36px;line-height:1.5}.page-intro p{margin-top:16px;max-width:720px}
@@ -48,3 +52,24 @@ subpage('usage_fee.html', 'ご利用料金', '一時預かりは1時間から、
 subpage('for_zero.html', '0歳児のご利用', 'ひよこルームでは、0歳のお子さまも施設でお預かりしています。ホームページからご予約いただけます。', readFileSync(new URL('zero-content.html', import.meta.url), 'utf8'));
 subpage('belongings.html', '保育当日のお持ち物', '毎回のお持ち物と、年齢・ご利用時間に応じて必要なもの、初回の確認書類をご案内します。', readFileSync(new URL('belongings-content.html', import.meta.url), 'utf8'));
 subpage('faq.html', 'よくある質問', 'ご予約や料金、お預かり、お迎えについて、よくいただくご質問をまとめました。', readFileSync(new URL('faq-content.html', import.meta.url), 'utf8'));
+subpage('facility_outline.html', '施設概要', '用賀駅から徒歩3分。0歳から未就学のお子さまをお預かりする、定員7名の一時預かり保育施設です。', readFileSync(new URL('facility-content.html', import.meta.url), 'utf8'));
+const tourPhotos = [
+  ['building','建物・入口・設備',[
+    ['2024/06/IMG_9386-1-731x1024.jpeg','建物の外観','私道に面した建物です。'],
+    ['2021/01/engawa-768x1024.jpg','縁側とお庭','縁側のあるお庭。夏にはプール遊びもします。'],
+    ['2021/02/5-1.jpg','広い玄関','お子さまの靴の着脱やお引き渡しを、ゆったりと行える玄関です。'],
+    ['2024/06/IMG_9286-scaled.jpeg','洗面所','木のぬくもりを感じる洗面所です。'],
+    ['2021/02/h-2.jpg','2階のサロン','サロン・レッスンのご利用とあわせて、一時預かりもご利用いただけます。託児の予約・料金は別途ご確認ください。'],
+    ['2024/06/IMG_9210-scaled.jpeg','駐車・駐輪スペース','駐車場は1台分。自転車も停められます。駐車場をご希望の方は、予約時に備考欄へご記入ください。']]],
+  ['childcare','保育室と日々の遊び',[
+    ['2023/05/IMG_5808-768x1024.jpeg','お庭での遊び','お庭で遊ぶこともあります。敷き詰められた石は、子どもたちに人気です。'],
+    ['2023/05/IMG_6746-768x1024.jpeg','おもちゃ','さまざまな年齢に対応したおもちゃをご用意しています。'],
+    ['2023/05/IMG_9366-768x1024.jpeg','異年齢で過ごす時間','さまざまな年齢のお子さまと交流しながら過ごします。'],
+    ['2023/05/IMG_5439-768x1024.jpeg','みんなで遊ぶ保育室','15畳の保育室で、みんなで遊びます。'],
+    ['2023/12/IMG_4239-768x1024.jpeg','日差しの入るお部屋','冬は暖かい日差しが入り、床暖房のある保育室で過ごします。'],
+    ['2023/05/IMG_6153-768x1024.jpeg','少人数の保育','定員7名。常時2〜3名の保育スタッフでお預かりしています。']]]
+];
+const photoSections = tourPhotos.map(([id,title,photos]) => `<section id="${id}" class="band"><div class="wrap"><h2>${title}</h2><div class="tour-grid" style="margin-top:28px">${photos.map(([path,name,caption])=>`<figure><img src="https://hiyocoroom.com/wp-content/uploads/${path}" alt="${name}" loading="lazy"><figcaption><h3>${name}</h3><p>${caption}</p></figcaption></figure>`).join('')}</div></div></section>`).join('');
+// Reuse the approved schedule so the overview and detail cannot drift apart.
+const day = template.slice(template.indexOf('<div class="day">'), template.indexOf('<div class="teachers">')).replace('class="day"', 'class="day room-day"').replace('<h3>園での1日</h3>', '<h2>園での1日</h2>');
+subpage('room.html', '園の様子', '建物やお庭、保育室での遊び、お子さまが過ごす1日をご紹介します。', `<div class="wrap"><nav class="section-links" aria-label="園の紹介メニュー"><a href="#building">建物・設備</a><a href="#childcare">保育室・遊び</a><a href="#one-day">園での1日</a></nav></div>${photoSections}<section id="one-day" class="band green"><div class="wrap reading">${day}</div></section><section class="band"><div class="wrap reading"><h2>ご利用前のご案内</h2><div class="actions"><a class="btn" href="facility_outline.html">施設概要</a><a class="btn" href="guide.html">ご利用案内</a><a class="btn" href="belongings.html">保育当日のお持ち物</a><a class="btn" href="https://hiyocoroom.com/access/">アクセス</a><a class="btn" href="https://hiyocoroom.com/salon_schedule/">サロン・レッスン</a></div></div></section>`);

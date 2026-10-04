@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
-for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html']) {
+for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html', 'room.html', 'facility_outline.html']) {
   const html = read(name);
   assert.equal((html.match(/<h1[ >]/g) || []).length, 1, name);
   assert(html.includes('name="robots" content="noindex,nofollow"'), name);
@@ -25,4 +25,8 @@ for (const text of ['1812879','1週間以内','身分証','切り取らず','備
 for (const text of ['2〜3枚','11:30〜12:00','15時','変更がなければ','資格情報']) assert(read('belongings.html').includes(text), text);
 assert(!read('for_zero.html').includes('1,100円'));
 for (const name of ['index.html','guide.html','usage_fee.html']) for (const old of ['for_zero','belongings','faq']) assert(!read(name).includes(`href="https://hiyocoroom.com/${old}/"`));
-console.log('PASS: six pages, local links, schedule, fees, seven FAQs and belongings conditions');
+assert.equal((read('room.html').match(/class="day-row"/g)||[]).length,6);
+assert.equal((read('room.html').match(/<figure>/g)||[]).length,12);
+for(const text of ['2020年6月15日','認可外保育施設','保育スタッフ8名','第59条']) assert(read('facility_outline.html').includes(text));
+assert(!read('index.html').includes('href="https://hiyocoroom.com/view_of_the_building/"'));
+console.log('PASS: eight pages, internal links, shared schedule, 12 tour photos and facility details');
