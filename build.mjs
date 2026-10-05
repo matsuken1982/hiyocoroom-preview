@@ -2,7 +2,12 @@ import { readFileSync, writeFileSync } from 'node:fs';
 
 // Keep the approved v4 comparison intact; generate the working pages from it.
 const template = readFileSync(new URL('./top-mock-v4.html', import.meta.url), 'utf8');
+const news = JSON.parse(readFileSync(new URL('./news-data.json', import.meta.url), 'utf8'));
+const escape = text => text.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
 const routes = new Map([
+  ['https://hiyocoroom.com/terms_of_use/', 'terms_of_use.html'],
+  ['https://hiyocoroom.com/privacypolicy/', 'privacypolicy.html'],
+  ['https://hiyocoroom.com/news/', 'news.html'],
   ['https://hiyocoroom.com/contact/', 'contact.html'],
   ['https://hiyocoroom.com/スタッフ募集/', 'recruit.html'],
   ['https://hiyocoroom.com/salon_schedule/', 'salon.html'],
@@ -16,12 +21,16 @@ const routes = new Map([
   ['https://hiyocoroom.com/view_of_the_building/', 'room.html#building'],
   ['https://hiyocoroom.com/room_and_childcare/', 'room.html#childcare'],
 ]);
+for (const article of news) { routes.set(article.url, article.file); routes.set(decodeURI(article.url), article.file); }
+routes.set('https://hiyocoroom.com/'+encodeURIComponent('スタッフ募集')+'/', 'recruit.html');
+routes.set(('https://hiyocoroom.com/'+encodeURIComponent('スタッフ募集')+'/').toLowerCase(), 'recruit.html');
 function links(html) {
   html = html.replace(/href="(?:index\.html)?#access"/g, 'href="access.html"');
   for (const [from, to] of routes) html = html.replaceAll(`href="${from}"`, `href="${to}"`);
   return html;
 }
 const extraStyle = `<style>
+.legal-copy p,.archive-copy p{white-space:pre-line;margin:18px 0}.legal-copy h2,.archive-copy h2{margin:36px 0 18px}.archive-copy img{width:auto;max-width:100%;height:auto;margin:24px auto}.archive-copy figure{margin:24px 0}.archive-copy a,.legal-copy a{overflow-wrap:anywhere}.archive-copy table{max-width:100%;border-collapse:collapse}.archive-copy td,.archive-copy th{padding:8px;border:1px solid var(--line)}.archive-notice{border-left:4px solid var(--yellow);padding:12px 20px;margin-bottom:30px}.news-date{font-size:14px;color:var(--muted)}
 .contact-form{display:block;width:100%;height:720px;border:1px solid var(--line);background:white;margin:24px 0}
 .route-list img{height:auto}
 .route-list{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}.route-list figure{margin:0}.route-list img{display:block;width:100%;aspect-ratio:4/5;object-fit:contain;background:#f0f2ef;border-radius:4px}.route-list figcaption{margin-top:16px}.route-list h3{display:flex;align-items:center;gap:12px;font-size:21px;margin:0 0 10px}.route-num{display:inline-grid;place-items:center;width:32px;height:32px;flex-shrink:0;background:var(--yellow);border-radius:50%;font:700 16px sans-serif}.access-map{display:block;width:100%;height:360px;border:1px solid var(--line);margin:24px 0}.route-list p{font-size:15px}@media(max-width:700px){.route-list{grid-template-columns:1fr;gap:32px}.access-map{height:280px}}
@@ -66,6 +75,8 @@ function subpage(name, title, description, body) {
 let home = template.replace('<main>', '<main id="main-content">');
 home = home.replaceAll('href="#guide"', 'href="guide.html"');
 home = home.replace('<div class="guide-links">', '<div class="guide-links"><a class="btn" href="guide.html">ご利用の流れを見る</a>');
+const newsItems = items => items.map(n=>`<li><a href="${n.file}"><time>${escape(n.date)}</time><span>${escape(n.title)}</span><span aria-hidden="true">→</span></a></li>`).join('');
+home = home.replace(/<ul class="news-list">[\s\S]*?<\/ul>/, `<ul class="news-list">${newsItems(news.slice(0,3))}</ul>`);
 writeFileSync(new URL('index.html', import.meta.url), common(home, '用賀の一時預かり保育', '用賀駅から徒歩3分。0歳から未就学児まで、必要な時間にご利用いただける一時預かり保育施設です。'));
 subpage('guide.html', 'ご利用案内', 'ご予約から当日のお迎えまでをご案内します。お仕事だけでなく、通院や美容室、ご自身の時間にもご利用ください。', readFileSync(new URL('guide-content.html', import.meta.url), 'utf8'));
 subpage('usage_fee.html', 'ご利用料金', '一時預かりは1時間から、30分単位でご利用いただけます。通常料金と、平日のお得プランをご案内します。', readFileSync(new URL('fees-content.html', import.meta.url), 'utf8'));
@@ -75,6 +86,13 @@ subpage('faq.html', 'よくある質問', 'ご予約や料金、お預かり、�
 subpage('access.html', 'アクセス', '用賀駅から徒歩3分。道沿いの看板から少し奥に入った一軒家です。写真で入口までをご案内します。', readFileSync(new URL('access-content.html', import.meta.url), 'utf8'));
 subpage('salon.html', 'サロン・レッスン', 'ひよこルームの2階には、サロンやレッスンをご利用いただけるスペースがあります。ご自身のケアや、親子で過ごす時間に。', readFileSync(new URL('salon-content.html', import.meta.url), 'utf8'));
 subpage('contact.html', 'お問い合わせ', 'ご利用についてのご質問や、ベビーシッターのご相談、スタッフ募集へのご応募を承ります。', readFileSync(new URL('contact-content.html', import.meta.url), 'utf8'));
+subpage('terms_of_use.html', '利用規約', '施設での一時預かり保育のご利用条件をご案内します。', readFileSync(new URL('terms_of_use-content.html', import.meta.url), 'utf8'));
+subpage('privacypolicy.html', 'プライバシーポリシー', '個人情報の取り扱いについてご案内します。', readFileSync(new URL('privacypolicy-content.html', import.meta.url), 'utf8'));
+subpage('news.html', 'お知らせ', 'ひよこルームからのお知らせと、これまでの活動の記録です。', `<section class="band"><div class="wrap reading"><p class="archive-notice">過去の記事には掲載当時の料金・募集・開催情報が含まれます。現在の条件は、<a href="usage_fee.html">ご利用料金</a>・<a href="guide.html">ご利用案内</a>をご確認ください。</p><ul class="news-list">${newsItems(news)}</ul></div></section>`);
+for(const n of news){
+  const ended=n.title.includes('おでかけひろば')?'<p><strong>おでかけひろばは現在終了しています。</strong></p>':'';
+  subpage(n.file,escape(n.title),`掲載日：${escape(n.date)}`,`<section class="band"><div class="wrap reading"><aside class="archive-notice"><p>掲載当時のお知らせを保存しています。この記事だけで現在の料金・募集・開催状況を判断せず、各案内ページをご確認ください。</p>${ended}<div class="section-links"><a href="usage_fee.html">現在の料金</a><a href="guide.html">ご利用案内</a><a href="recruit.html">スタッフ募集</a></div></aside><article class="archive-copy">${n.html}</article><div class="actions" style="margin-top:32px"><a class="btn" href="news.html">お知らせ一覧に戻る</a></div></div></section>`);
+}
 subpage('recruit.html', 'スタッフ募集', '用賀の一時預かり保育ひよこルームでは、保育スタッフを随時募集しています。', readFileSync(new URL('recruit-content.html', import.meta.url), 'utf8'));
 subpage('babysitter.html', 'ベビーシッター', 'ひよこルームの保育スタッフが、ご自宅などへ伺い、お子さまをお預かりします。0歳から小学3年生までご相談いただけます。', readFileSync(new URL('babysitter-content.html', import.meta.url), 'utf8'));
 subpage('facility_outline.html', '施設概要', '用賀駅から徒歩3分。0歳から未就学のお子さまをお預かりする、定員7名の一時預かり保育施設です。', readFileSync(new URL('facility-content.html', import.meta.url), 'utf8'));

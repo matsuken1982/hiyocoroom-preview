@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
-for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html', 'room.html', 'facility_outline.html', 'access.html', 'babysitter.html', 'salon.html', 'recruit.html', 'contact.html']) {
+const news = JSON.parse(read('news-data.json'));
+assert.equal(news.length,27);
+assert(!news.some(article => article.title.includes('月極料金')));
+for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html', 'room.html', 'facility_outline.html', 'access.html', 'babysitter.html', 'salon.html', 'recruit.html', 'contact.html', 'terms_of_use.html', 'privacypolicy.html', 'news.html', ...news.map(article=>article.file)]) {
   const html = read(name);
   assert.equal((html.match(/<h1[ >]/g) || []).length, 1, name);
   assert(html.includes('name="robots" content="noindex,nofollow"'), name);
@@ -53,4 +56,13 @@ const contact=read('contact.html');
 for(const text of ['MNkl-XAY-mU','数日','9:00〜17:00','フォームが表示されない','title="ひよこルームのお問い合わせフォーム','href="salon.html"']) assert(contact.includes(text),text);
 assert(!contact.includes('<input'));
 assert(home.includes('href="contact.html"'));
-console.log('PASS: thirteen pages, links, unchanged contact form and separate reservation/application routes');
+for(const article of news){assert(read('news.html').includes(article.file));assert(read(article.file).includes('掲載当時'));assert(read(article.file).includes(article.date));}
+for(const text of ['1812879','健康保険証','保育士の子ども']) assert(read('terms_of_use.html').includes(text),text);
+for(const text of ['自動の健全な育成','2022年2月19日','Cookie']) assert(read('privacypolicy.html').includes(text),text);
+const review=read('review.html');
+assert.equal((review.match(/data-title=/g)||[]).length,8);
+assert(!review.includes('localStorage'));
+assert(!review.includes('<form'));
+assert(!review.includes('fetch('));
+assert(!review.match(/<textarea[^>]*>[^<]+<\/textarea>/));
+console.log('PASS: 43 site pages, 27 news records, existing content checks, review fields blank and non-submitting');
