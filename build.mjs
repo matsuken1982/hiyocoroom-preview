@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 // Keep the approved v4 comparison intact; generate the working pages from it.
 const template = readFileSync(new URL('./top-mock-v4.html', import.meta.url), 'utf8');
 const routes = new Map([
+  ['https://hiyocoroom.com/contact/', 'contact.html'],
   ['https://hiyocoroom.com/スタッフ募集/', 'recruit.html'],
   ['https://hiyocoroom.com/salon_schedule/', 'salon.html'],
   ['https://hiyocoroom.com/babysitter/', 'babysitter.html'],
@@ -21,6 +22,7 @@ function links(html) {
   return html;
 }
 const extraStyle = `<style>
+.contact-form{display:block;width:100%;height:720px;border:1px solid var(--line);background:white;margin:24px 0}
 .route-list img{height:auto}
 .route-list{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 32px}.route-list figure{margin:0}.route-list img{display:block;width:100%;aspect-ratio:4/5;object-fit:contain;background:#f0f2ef;border-radius:4px}.route-list figcaption{margin-top:16px}.route-list h3{display:flex;align-items:center;gap:12px;font-size:21px;margin:0 0 10px}.route-num{display:inline-grid;place-items:center;width:32px;height:32px;flex-shrink:0;background:var(--yellow);border-radius:50%;font:700 16px sans-serif}.access-map{display:block;width:100%;height:360px;border:1px solid var(--line);margin:24px 0}.route-list p{font-size:15px}@media(max-width:700px){.route-list{grid-template-columns:1fr;gap:32px}.access-map{height:280px}}
 .tour-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px 24px}.tour-grid figure{margin:0}.tour-grid img{width:100%;height:310px;object-fit:contain;background:#f0f2ef}.tour-grid figcaption{margin-top:12px;font-size:14px}.tour-grid h3{font-size:20px;margin:0 0 8px}.outline-list{margin:0}.outline-list>div{display:grid;grid-template-columns:150px 1fr;gap:24px;padding:18px 0;border-bottom:1px solid var(--line)}.outline-list dt{font-weight:700}.outline-list dd{margin:0}.room-day{display:block}.room-day dl{max-width:650px;margin-top:24px}@media(max-width:700px){.tour-grid{grid-template-columns:1fr}.tour-grid img{height:340px}.outline-list>div{grid-template-columns:95px 1fr;gap:14px}}
@@ -72,6 +74,7 @@ subpage('belongings.html', '保育当日のお持ち物', '毎回のお持ち物
 subpage('faq.html', 'よくある質問', 'ご予約や料金、お預かり、お迎えについて、よくいただくご質問をまとめました。', readFileSync(new URL('faq-content.html', import.meta.url), 'utf8'));
 subpage('access.html', 'アクセス', '用賀駅から徒歩3分。道沿いの看板から少し奥に入った一軒家です。写真で入口までをご案内します。', readFileSync(new URL('access-content.html', import.meta.url), 'utf8'));
 subpage('salon.html', 'サロン・レッスン', 'ひよこルームの2階には、サロンやレッスンをご利用いただけるスペースがあります。ご自身のケアや、親子で過ごす時間に。', readFileSync(new URL('salon-content.html', import.meta.url), 'utf8'));
+subpage('contact.html', 'お問い合わせ', 'ご利用についてのご質問や、ベビーシッターのご相談、スタッフ募集へのご応募を承ります。', readFileSync(new URL('contact-content.html', import.meta.url), 'utf8'));
 subpage('recruit.html', 'スタッフ募集', '用賀の一時預かり保育ひよこルームでは、保育スタッフを随時募集しています。', readFileSync(new URL('recruit-content.html', import.meta.url), 'utf8'));
 subpage('babysitter.html', 'ベビーシッター', 'ひよこルームの保育スタッフが、ご自宅などへ伺い、お子さまをお預かりします。0歳から小学3年生までご相談いただけます。', readFileSync(new URL('babysitter-content.html', import.meta.url), 'utf8'));
 subpage('facility_outline.html', '施設概要', '用賀駅から徒歩3分。0歳から未就学のお子さまをお預かりする、定員7名の一時預かり保育施設です。', readFileSync(new URL('facility-content.html', import.meta.url), 'utf8'));

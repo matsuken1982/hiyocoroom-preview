@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
-for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html', 'room.html', 'facility_outline.html', 'access.html', 'babysitter.html', 'salon.html', 'recruit.html']) {
+for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html', 'room.html', 'facility_outline.html', 'access.html', 'babysitter.html', 'salon.html', 'recruit.html', 'contact.html']) {
   const html = read(name);
   assert.equal((html.match(/<h1[ >]/g) || []).length, 1, name);
   assert(html.includes('name="robots" content="noindex,nofollow"'), name);
@@ -47,6 +47,10 @@ for(const text of ['https://noka-youga.jp/','外部講師','みきこ','稗田 �
 assert(!salon.includes('コーチング'));
 assert(home.includes('href="salon.html"'));
 const recruit=read('recruit.html');
-for(const text of ['時給1,300円','時給1,400円','1日3時間','交通費支給','社員登用','未経験','ブランク','保育士資格','href="#recruit-apply"','href="https://hiyocoroom.com/contact/"']) assert(recruit.includes(text),text);
+for(const text of ['時給1,300円','時給1,400円','1日3時間','交通費支給','社員登用','未経験','ブランク','保育士資格','href="#recruit-apply"','href="contact.html"']) assert(recruit.includes(text),text);
 for(const text of ['1,200円','確認待ち','未公開','select-type.com/rsv']) assert(!recruit.includes(text),text);
-console.log('PASS: twelve pages, internal links, recruitment wages and separate application route');
+const contact=read('contact.html');
+for(const text of ['MNkl-XAY-mU','数日','9:00〜17:00','フォームが表示されない','title="ひよこルームのお問い合わせフォーム','href="salon.html"']) assert(contact.includes(text),text);
+assert(!contact.includes('<input'));
+assert(home.includes('href="contact.html"'));
+console.log('PASS: thirteen pages, links, unchanged contact form and separate reservation/application routes');
