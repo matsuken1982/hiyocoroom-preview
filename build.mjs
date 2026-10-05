@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 // Keep the approved v4 comparison intact; generate the working pages from it.
 const template = readFileSync(new URL('./top-mock-v4.html', import.meta.url), 'utf8');
 const routes = new Map([
+  ['https://hiyocoroom.com/スタッフ募集/', 'recruit.html'],
   ['https://hiyocoroom.com/salon_schedule/', 'salon.html'],
   ['https://hiyocoroom.com/babysitter/', 'babysitter.html'],
   ['https://hiyocoroom.com/access/', 'access.html'],
@@ -48,6 +49,11 @@ function subpage(name, title, description, body) {
   html = html.replace(/href="#(top|features|room|guide|services|news|access)"/g, 'href="index.html#$1"');
   html = html.replaceAll('href="index.html#guide"', 'href="guide.html"');
   if (name === 'salon.html') html = html.replaceAll('>ご予約はこちら</a>', '>託児の予約</a>');
+  if (name === 'recruit.html') {
+    html = html.replaceAll('href="https://select-type.com/rsv/?id=mc_oswR5lCc"', 'href="#recruit-apply"')
+      .replaceAll('>ご予約はこちら</a>', '>応募について</a>')
+      .replaceAll('>一時預かりを予約する</a>', '>応募について</a>');
+  }
   if (name === 'babysitter.html') {
     html = html.replaceAll('href="https://select-type.com/rsv/?id=mc_oswR5lCc"', 'href="#sitter-contact"')
       .replaceAll('>ご予約はこちら</a>', '>シッターの相談</a>')
@@ -66,6 +72,7 @@ subpage('belongings.html', '保育当日のお持ち物', '毎回のお持ち物
 subpage('faq.html', 'よくある質問', 'ご予約や料金、お預かり、お迎えについて、よくいただくご質問をまとめました。', readFileSync(new URL('faq-content.html', import.meta.url), 'utf8'));
 subpage('access.html', 'アクセス', '用賀駅から徒歩3分。道沿いの看板から少し奥に入った一軒家です。写真で入口までをご案内します。', readFileSync(new URL('access-content.html', import.meta.url), 'utf8'));
 subpage('salon.html', 'サロン・レッスン', 'ひよこルームの2階には、サロンやレッスンをご利用いただけるスペースがあります。ご自身のケアや、親子で過ごす時間に。', readFileSync(new URL('salon-content.html', import.meta.url), 'utf8'));
+subpage('recruit.html', 'スタッフ募集', '用賀の一時預かり保育ひよこルームでは、保育スタッフを随時募集しています。', readFileSync(new URL('recruit-content.html', import.meta.url), 'utf8'));
 subpage('babysitter.html', 'ベビーシッター', 'ひよこルームの保育スタッフが、ご自宅などへ伺い、お子さまをお預かりします。0歳から小学3年生までご相談いただけます。', readFileSync(new URL('babysitter-content.html', import.meta.url), 'utf8'));
 subpage('facility_outline.html', '施設概要', '用賀駅から徒歩3分。0歳から未就学のお子さまをお預かりする、定員7名の一時預かり保育施設です。', readFileSync(new URL('facility-content.html', import.meta.url), 'utf8'));
 const tourPhotos = [
