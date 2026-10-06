@@ -4,7 +4,7 @@ const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
 const news = JSON.parse(read('news-data.json'));
 assert.equal(news.length,27);
 assert(!news.some(article => article.title.includes('月極料金')));
-for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html', 'room.html', 'facility_outline.html', 'access.html', 'babysitter.html', 'salon.html', 'recruit.html', 'contact.html', 'terms_of_use.html', 'privacypolicy.html', 'news.html', ...news.map(article=>article.file)]) {
+for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html', 'belongings.html', 'faq.html', 'room.html', 'facility_outline.html', 'access.html', 'babysitter.html', 'salon.html', 'recruit.html', 'contact.html', 'childcare_teachers.html', 'terms_of_use.html', 'privacypolicy.html', 'news.html', ...news.map(article=>article.file)]) {
   const html = read(name);
   assert.equal((html.match(/<h1[ >]/g) || []).length, 1, name);
   assert(html.includes('name="robots" content="noindex,nofollow"'), name);
@@ -16,6 +16,15 @@ for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html
   }
 }
 const home = read('index.html');
+assert(!home.includes('data-slide="'));
+assert(home.includes('id="pause"'));
+assert(home.includes('id="operator-message"'));
+assert(home.includes('id="parent-voices"'));
+assert(home.includes('href="childcare_teachers.html"'));
+assert(!home.includes('href="https://hiyocoroom.com/childcare_teachers/"'));
+assert.equal((read('childcare_teachers.html').match(/class="pending-photo"/g)||[]).length,3);
+assert(!read('childcare_teachers.html').includes('保育士'));
+assert.equal((home.match(/class="pending-copy"[^>]*><\/div>/g)||[]).length,3);
 assert.equal((home.match(/class="day-row"/g) || []).length, 6);
 assert(home.includes('href="guide.html"'));
 assert(home.includes('href="usage_fee.html"'));
@@ -65,4 +74,4 @@ assert(!review.includes('localStorage'));
 assert(!review.includes('<form'));
 assert(!review.includes('fetch('));
 assert(!review.match(/<textarea[^>]*>[^<]+<\/textarea>/));
-console.log('PASS: 43 site pages, 27 news records, existing content checks, review fields blank and non-submitting');
+console.log('PASS: 44 site pages, 27 news records, empty publication frames, numbered slide buttons removed, review fields non-submitting');
