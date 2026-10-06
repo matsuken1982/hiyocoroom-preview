@@ -31,6 +31,7 @@ function links(html) {
   return html;
 }
 const extraStyle = `<style>
+${readFileSync(new URL('presentation.css', import.meta.url), 'utf8')}
 .pending-copy{min-height:180px;border:1px dashed #8d998f;background:rgba(255,255,255,.55);margin:20px 0}.pending-note{font-size:13px;color:var(--muted);margin:12px 0}.pending-staff{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:28px}.pending-photo{aspect-ratio:4/3;background:#edf0ec;border:1px dashed #8d998f}.pending-name{height:32px;width:55%;border-bottom:1px dashed #8d998f;margin:20px 0}.pending-voices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}.pending-voices .pending-copy{min-height:180px}.operator-copy{max-width:820px}.operator-signature{text-align:right}.pending-staff .pending-copy{min-height:140px}@media(max-width:700px){.pending-staff,.pending-voices{grid-template-columns:1fr}.operator-signature{text-align:left}}
 .legal-copy p,.archive-copy p{white-space:pre-line;margin:18px 0}.legal-copy h2,.archive-copy h2{margin:36px 0 18px}.archive-copy img{width:auto;max-width:100%;height:auto;margin:24px auto}.archive-copy figure{margin:24px 0}.archive-copy a,.legal-copy a{overflow-wrap:anywhere}.archive-copy table{max-width:100%;border-collapse:collapse}.archive-copy td,.archive-copy th{padding:8px;border:1px solid var(--line)}.archive-notice{border-left:4px solid var(--yellow);padding:12px 20px;margin-bottom:30px}.news-date{font-size:14px;color:var(--muted)}
 .contact-form{display:block;width:100%;height:720px;border:1px solid var(--line);background:white;margin:24px 0}
@@ -77,8 +78,9 @@ function subpage(name, title, description, body) {
 let home = template.replace('<main>', '<main id="main-content">');
 // Keep auto-rotation and its pause control; remove only numbered photo selectors.
 home = home.replace(/<button data-slide="\d"[^>]*>\d<\/button>/g, '');
-const pendingSections = `<section id="operator-message" class="band"><div class="wrap operator-copy"><h2>運営メッセージ</h2><p class="pending-note">原稿準備中</p><div class="pending-copy" role="region" aria-label="運営メッセージ本文の掲載予定枠"></div><p class="operator-signature">ようがの合同会社</p></div></section><section id="parent-voices" class="band blue"><div class="wrap"><h2>保護者の声</h2><p class="pending-note">掲載許可を確認した感想を掲載予定</p><div class="pending-voices"><div class="pending-copy" role="region" aria-label="保護者の声の掲載予定枠1"></div><div class="pending-copy" role="region" aria-label="保護者の声の掲載予定枠2"></div></div></div></section>`;
+const pendingSections = readFileSync(new URL('home-samples-content.html', import.meta.url), 'utf8');
 home = home.replace('<section id="guide"', pendingSections + '<section id="guide"');
+home = home.replace(/<section id="services"[\s\S]*?<\/section>/, readFileSync(new URL('home-services-content.html', import.meta.url), 'utf8'));
 home = home.replaceAll('href="#guide"', 'href="guide.html"');
 home = home.replace('<div class="guide-links">', '<div class="guide-links"><a class="btn" href="guide.html">ご利用の流れを見る</a>');
 const newsItems = items => items.map(n=>`<li><a href="${n.file}"><time>${escape(n.date)}</time><span>${escape(n.title)}</span><span aria-hidden="true">→</span></a></li>`).join('');
