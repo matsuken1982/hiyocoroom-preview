@@ -76,6 +76,8 @@ assert(!sitter.includes('https://select-type.com/rsv/'));
 assert(sitter.includes('ベビーシッター利用規約.pdf'));
 assert(home.includes('href="babysitter.html"'));
 const salon=read('salon.html');
+for(const source of ['home-services-content.html','salon-content.html']) assert(!read(source).includes('運営：ようがの合同会社'));
+for(const page of [home,salon]) assert(page.includes('運営：ようがの合同会社'));
 for(const text of ['https://noka-youga.jp/','外部講師','みきこ','稗田 洋子','予約・料金が別','お子さま連れでなくても','salon_teachers/','view_of_the_salon/']) assert(salon.includes(text),text);
 assert(!salon.includes('コーチング'));
 for(const id of ['salon-noka','rhythm','pilates']){assert(home.includes(`href="salon.html#${id}"`));assert(read('salon.html').includes(`id="${id}"`));}
