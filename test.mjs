@@ -31,8 +31,13 @@ const expectedVoices=[
   '親から離れて過ごす初めての場所が、ひよこルームで本当によかったです。いつも温かい雰囲気で、愛情を持って接してくださり、ありがとうございました。',
   '久々だったのでドキドキしていましたが、いつもスタッフの方たちが明るく優しく迎えてくださるので、子どももすぐになじんで、楽しく過ごせたんだと思います。その日の様子をお迎えのときも、メールでもたくさん伝えてくださるので、想像して微笑ましく、うれしいです。'
 ];
-assert.deepEqual([...voices.matchAll(/<blockquote><p>(.*?)<\/p><\/blockquote>/g)].map(m=>m[1]),expectedVoices);
-assert.equal((voices.match(/<p class="voice-attribution">ご利用の保護者より<\/p>/g)||[]).length,2);
+const actualVoices=[...voices.matchAll(/<blockquote><p>(.*?)<\/p><\/blockquote>/g)].map(m=>m[1]);
+assert.equal(actualVoices.length,4);
+assert.deepEqual([actualVoices[0],actualVoices[2]],expectedVoices);
+assert.equal(actualVoices[1],"息子が0歳の時から定期的にお世話になっており<br>お迎え後にいただくその日の様子のメールを<br>楽しみにしていたので終わってしまうのが<br>とてもさみしいです。<br>今まで本当にありがとうございました！！<br><br>2階で開催されている英語リトミックにも<br>参加しているのですが、<br>明日はひよこルームさん行くよーというと<br>「上？下？」と聞いてきて「明日は下だよ」というと<br>「やったー！！下行きたかったんだよう！」というくらい、<br>ひよこルームさんに行くのを楽しみにしている息子です。<br>スタッフのみなさんがいつも息子によくしてくださるので<br>すっかり安心して楽しめる場所になっているようです。");
+assert.equal(actualVoices[3],"平日保育園に通い土日も一時預かりを<br>お願いすることに<br>まだまだ罪悪感もあるのですが<br>息子が楽しみにしている様子を見ると<br>その気持ちも少し和らぎ<br>そういった意味でもとてもありがたいな<br>と感じています。<br>いつも本当にありがとうございます☺️");
+assert.deepEqual([...voices.matchAll(/<p class="voice-attribution">(.*?)<\/p>/g)].map(m=>m[1]),[1,2,1,2].map(age=>age+'歳のお子さまの保護者より'));
+assert(read('presentation.css').includes('scroll-snap-type:x mandatory'));
 assert(!/<h3|架空|歳児|sample-label/.test(voices));
 assert(voices.includes('本番サイトへの掲載前に最終確認'));
 assert(home.includes("h1,h2,h3,h4,h5,h6,.noka h3{font-family:'Noto Sans JP',sans-serif}"));
