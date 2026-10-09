@@ -25,8 +25,16 @@ assert(!home.includes('href="https://hiyocoroom.com/childcare_teachers/"'));
 assert.equal((read('teachers-content.html').match(/<figure>/g)||[]).length,13);
 assert.equal((read('teachers-content.html').split('owner-roster')[0].match(/<figure>/g)||[]).length,11);
 assert(!read('childcare_teachers.html').includes('保育士'));
-assert.equal((home.match(/<p class="sample-label">架空のサンプル<\/p>/g)||[]).length,2);
-assert(home.includes('実際の利用者の声・実績ではありません'));
+const voices=home.split('<section id="parent-voices"')[1].split('</section>')[0];
+const expectedVoices=[
+  '親から離れて過ごす初めての場所が、ひよこルームで本当によかったです。いつも温かい雰囲気で、愛情を持って接してくださり、ありがとうございました。',
+  '久々だったのでドキドキしていましたが、いつもスタッフの方たちが明るく優しく迎えてくださるので、子どももすぐになじんで、楽しく過ごせたんだと思います。その日の様子をお迎えのときも、メールでもたくさん伝えてくださるので、想像して微笑ましく、うれしいです。'
+];
+assert.deepEqual([...voices.matchAll(/<blockquote><p>(.*?)<\/p><\/blockquote>/g)].map(m=>m[1]),expectedVoices);
+assert.equal((voices.match(/<p class="voice-attribution">ご利用の保護者より<\/p>/g)||[]).length,2);
+assert(!/<h3|架空|歳児|sample-label/.test(voices));
+assert(voices.includes('本番サイトへの掲載前に最終確認'));
+assert(home.includes("h1,h2,h3,h4,h5,h6,.noka h3{font-family:'Noto Sans JP',sans-serif}"));
 assert(home.includes('運営者が確認・承認したメッセージではありません'));
 for(const purpose of ['自分をいたわる時間に','親子で音楽を楽しむ','身体を動かす時間に']){assert(home.includes(purpose));assert(read('salon.html').includes(purpose));}
 assert.equal((home.match(/class="day-row"/g) || []).length, 6);
@@ -78,4 +86,4 @@ assert(!review.includes('localStorage'));
 assert(!review.includes('<form'));
 assert(!review.includes('fetch('));
 assert(!review.match(/<textarea[^>]*>[^<]+<\/textarea>/));
-console.log('PASS: 44 site pages, 27 news records, 11 staff and 2 owners, labeled fictional samples, salon purpose links');
+console.log('PASS: 44 site pages, 27 news records, 13 people, exact preview testimonials, heading font and salon links');
