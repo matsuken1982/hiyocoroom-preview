@@ -78,7 +78,8 @@ function subpage(name, title, description, body) {
 let home = template.replace('<main>', '<main id="main-content">');
 // Keep auto-rotation and its pause control; remove only numbered photo selectors.
 home = home.replace(/<button data-slide="\d"[^>]*>\d<\/button>/g, '');
-const pendingSections = readFileSync(new URL('home-samples-content.html', import.meta.url), 'utf8');
+// Retain the operator draft in the source for a later addition, but do not publish it.
+const pendingSections = readFileSync(new URL('home-samples-content.html', import.meta.url), 'utf8').replace(/<section id="operator-message"[\s\S]*?<\/section>\s*/, '');
 home = home.replace('<section id="guide"', pendingSections + '<section id="guide"');
 home = home.replace(/<section id="services"[\s\S]*?<\/section>/, readFileSync(new URL('home-services-content.html', import.meta.url), 'utf8'));
 home = home.replaceAll('href="#guide"', 'href="guide.html"');

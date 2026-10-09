@@ -18,7 +18,8 @@ for (const name of ['index.html', 'guide.html', 'usage_fee.html', 'for_zero.html
 const home = read('index.html');
 assert(!home.includes('data-slide="'));
 assert(home.includes('id="pause"'));
-assert(home.includes('id="operator-message"'));
+assert(!home.includes('id="operator-message"'));
+assert(!read('childcare_teachers.html').includes('href="index.html#operator-message"'));
 assert(home.includes('id="parent-voices"'));
 assert(home.includes('href="childcare_teachers.html"'));
 assert(!home.includes('href="https://hiyocoroom.com/childcare_teachers/"'));
@@ -35,7 +36,8 @@ assert.equal((voices.match(/<p class="voice-attribution">ご利用の保護者�
 assert(!/<h3|架空|歳児|sample-label/.test(voices));
 assert(voices.includes('本番サイトへの掲載前に最終確認'));
 assert(home.includes("h1,h2,h3,h4,h5,h6,.noka h3{font-family:'Noto Sans JP',sans-serif}"));
-assert(home.includes('運営者が確認・承認したメッセージではありません'));
+assert(!home.includes('運営者が確認・承認したメッセージではありません'));
+assert(read('home-samples-content.html').includes('id="operator-message"'));
 for(const purpose of ['自分をいたわる時間に','親子で音楽を楽しむ','身体を動かす時間に']){assert(home.includes(purpose));assert(read('salon.html').includes(purpose));}
 assert.equal((home.match(/class="day-row"/g) || []).length, 6);
 assert(home.includes('href="guide.html"'));
